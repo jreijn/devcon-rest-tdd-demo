@@ -18,23 +18,18 @@ class PlanetResourceAssembler extends ResourceAssemblerSupport<Planet, PlanetRes
         super(PlanetRestController.class, PlanetResource.class);
     }
 
+    @Override
+    public PlanetResource toResource(Planet planet) {
+        Link link = linkTo(methodOn(PlanetRestController.class, planet.getId())
+                .getPlanetById(planet.getId())).withSelfRel();
+        return new PlanetResource(planet, link);
+    }
+
     public Resources<PlanetResource> toPlanetResources(Iterable<? extends Planet> entities) {
         List<PlanetResource> planetResources = super.toResources(entities);
         Link link = linkTo(methodOn(PlanetRestController.class)
                 .getAllPlanets()).withSelfRel();
         return new Resources<>(planetResources, link);
     }
-
-    @Override
-    public PlanetResource toResource(Planet planet) {
-        return createResource(planet);
-    }
-
-    private PlanetResource createResource(Planet planet) {
-        Link link = linkTo(methodOn(PlanetRestController.class, planet.getId())
-                .getPlanetById(planet.getId())).withSelfRel();
-        return new PlanetResource(planet, link);
-    }
-
 
 }
