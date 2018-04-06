@@ -9,17 +9,20 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * Assembler for creating resources from planets
+ */
 class PlanetResourceAssembler extends ResourceAssemblerSupport<Planet, PlanetResource> {
 
     public PlanetResourceAssembler() {
         super(PlanetRestController.class, PlanetResource.class);
     }
 
-    public Resources toPlanetResources(Iterable<? extends Planet> entities) {
+    public Resources<PlanetResource> toPlanetResources(Iterable<? extends Planet> entities) {
         List<PlanetResource> planetResources = super.toResources(entities);
         Link link = linkTo(methodOn(PlanetRestController.class)
                 .getAllPlanets()).withSelfRel();
-        return new Resources(planetResources,link);
+        return new Resources<>(planetResources, link);
     }
 
     @Override
@@ -30,7 +33,7 @@ class PlanetResourceAssembler extends ResourceAssemblerSupport<Planet, PlanetRes
     private PlanetResource createResource(Planet planet) {
         Link link = linkTo(methodOn(PlanetRestController.class, planet.getId())
                 .getPlanetById(planet.getId())).withSelfRel();
-        return new PlanetResource(planet,link);
+        return new PlanetResource(planet, link);
     }
 
 
