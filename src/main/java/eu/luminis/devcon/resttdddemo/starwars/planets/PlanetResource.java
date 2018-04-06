@@ -5,9 +5,9 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(collectionRelation="planets")
-public class PlanetResource extends Resource {
+public class PlanetResource extends Resource<Planet> {
 
-    public PlanetResource(Object content, Link... links) {
+    public PlanetResource(Planet content, Link... links) {
         super(content, links);
     }
 

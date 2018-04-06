@@ -6,7 +6,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.hateoas.RelProvider;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.hateoas.core.EvoInflectorRelProvider;
 
 import java.util.Arrays;
 
@@ -23,7 +25,12 @@ public class RestTddDemoApplication {
         return (args) ->
                 Arrays.asList("Alderaan,Bespin,Naboo,Coruscant,Kamino,Geonosis".split(","))
                         .forEach(planetName -> {
-                            Planet planet = planetRepository.save(new Planet(planetName));
+                            planetRepository.save(new Planet(planetName));
                         });
+    }
+
+    @Bean
+    public RelProvider relProvider() {
+        return new EvoInflectorRelProvider();
     }
 }

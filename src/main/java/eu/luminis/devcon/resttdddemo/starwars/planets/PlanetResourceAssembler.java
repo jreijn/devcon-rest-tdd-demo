@@ -1,7 +1,10 @@
 package eu.luminis.devcon.resttdddemo.starwars.planets;
 
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+
+import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -10,6 +13,13 @@ class PlanetResourceAssembler extends ResourceAssemblerSupport<Planet, PlanetRes
 
     public PlanetResourceAssembler() {
         super(PlanetRestController.class, PlanetResource.class);
+    }
+
+    public Resources toPlanetResources(Iterable<? extends Planet> entities) {
+        List<PlanetResource> planetResources = super.toResources(entities);
+        Link link = linkTo(methodOn(PlanetRestController.class)
+                .getAllPlanets()).withSelfRel();
+        return new Resources(planetResources,link);
     }
 
     @Override
@@ -22,4 +32,6 @@ class PlanetResourceAssembler extends ResourceAssemblerSupport<Planet, PlanetRes
                 .getPlanetById(planet.getId())).withSelfRel();
         return new PlanetResource(planet,link);
     }
+
+
 }
