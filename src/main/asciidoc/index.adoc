@@ -20,18 +20,18 @@ Timestamps within API response bodies are always returned in ISO 8601 format.
 
 === Resources
 
-//[[resources-planets-get]]
-//==== Listing Planets
-//A `GET` request will list all Planets.
-//
-//[[resources-planets-request-example]]
-//===== Example request
-//include::{snippets}/planets/get/curl-request.adoc[]
-//
-//[[resources-filtertools-response-example]]
-//===== Example response
-//include::{snippets}/planets/get/http-response.adoc[]
-//
-//[[resources-filtertools-response-structure]]
-//===== Response fields
-//include::{snippets}/planets/get/response-fields.adoc[]
+[[resources-planets-get]]
+==== Listing Planets
+A `GET` request will list all Planets.
+
+[[resources-planets-request-example]]
+===== Example request
+include::{snippets}/planets/get/curl-request.adoc[]
+
+[[resources-filtertools-response-example]]
+===== Example response
+include::{snippets}/planets/get/http-response.adoc[]
+
+[[resources-filtertools-response-structure]]
+===== Response fields
+include::{snippets}/planets/get/response-fields.adoc[]
