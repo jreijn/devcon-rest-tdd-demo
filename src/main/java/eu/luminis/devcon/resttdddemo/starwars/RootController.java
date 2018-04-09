@@ -1,5 +1,6 @@
 package eu.luminis.devcon.resttdddemo.starwars;
 
+import eu.luminis.devcon.resttdddemo.starwars.people.PeopleRestController;
 import eu.luminis.devcon.resttdddemo.starwars.planets.PlanetRestController;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +13,16 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 class RootController {
 
-	@GetMapping("/")
-	public ResponseEntity<ResourceSupport> root() {
+    @GetMapping("/")
+    public ResponseEntity<ResourceSupport> root() {
 
-		ResourceSupport resourceSupport = new ResourceSupport();
+        ResourceSupport resourceSupport = new ResourceSupport();
 
-		resourceSupport.add(linkTo(methodOn(RootController.class).root()).withSelfRel());
-		resourceSupport.add(linkTo(methodOn(PlanetRestController.class).getAllPlanets()).withRel("planets"));
+        resourceSupport.add(linkTo(methodOn(RootController.class).root()).withSelfRel());
+        resourceSupport.add(linkTo(methodOn(PlanetRestController.class).getAllPlanets()).withRel("planets"));
+        resourceSupport.add(linkTo(methodOn(PeopleRestController.class).getAllPeople()).withRel("people"));
 
-		return ResponseEntity.ok(resourceSupport);
-	}
+        return ResponseEntity.ok(resourceSupport);
+    }
 
 }

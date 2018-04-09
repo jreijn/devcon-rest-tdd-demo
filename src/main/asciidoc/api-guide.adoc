@@ -1,0 +1,239 @@
+= DevCon REST TDD Demo
+Jeroen Reijn;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+:operation-curl-request-title: Example request
+:operation-http-response-title: Example response
+
+[[overview]]
+= Overview
+
+Welcome to the the DevCon Star Wars API! This documentation should help you familiarise yourself with the resources available and how to consume them with HTTP requests.
+
+[quote,  Star Wars: Episode IV A New Hope]
+____
+May the force be with you, always.
+____
+
+[[overview-http-verbs]]
+== HTTP verbs
+
+DevCon Starwars API tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP verbs.
+
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+
+| `POST`
+| Used to create a new resource
+
+| `PATCH`
+| Used to update an existing resource, including partial updates
+
+| `DELETE`
+| Used to delete an existing resource
+|===
+
+[[overview-http-status-codes]]
+== HTTP status codes
+
+DevCon Starwars API tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| The request completed successfully
+
+| `201 Created`
+| A new resource has been created successfully. The resource's URI is available from the response's
+`Location` header
+
+| `204 No Content`
+| An update to an existing resource has been applied successfully
+
+| `400 Bad Request`
+| The request was malformed. The response body will include an error providing further information
+
+| `404 Not Found`
+| The requested resource does not exist
+|===
+
+[[overview-headers]]
+== Headers
+
+Every response has the following header(s):
+
+include::{snippets}/headers-example/response-headers.adoc[]
+
+[[overview-errors]]
+== Errors
+
+Whenever an error response (status code >= 400) is returned, the body will contain a JSON object
+that describes the problem. The error object has the following structure:
+
+include::{snippets}/error-example/response-fields.adoc[]
+
+For example, a request to create a planet with incorrect information results in a
+`400 Bad Request` response:
+
+include::{snippets}/error-example/http-response.adoc[]
+
+[[overview-hypermedia]]
+== Hypermedia
+
+DevCon Starwars API uses hypermedia and resources include links to other resources in their
+responses. Responses are in http://stateless.co/hal_specification.html[Hypertext Application
+from resource to resource.
+Language (HAL)] format. Links can be found beneath the `_links` key. Users of the API should
+not create URIs themselves, instead they should use the above-described links to navigate
+
+[[resources]]
+= Resources
+
+
+
+[[resources-index]]
+== Index
+
+The index provides the entry point into the service.
+
+
+
+[[resources-index-access]]
+=== Accessing the index
+
+A `GET` request is used to access the index
+
+operation::index-example[snippets='response-fields,http-response,links']
+
+
+
+[[resources-planets]]
+== Planets
+
+The Planets resources is used to create and list planets
+
+
+
+[[resources-planets-list]]
+=== Listing planets
+
+A `GET` request will list all of the service's planets.
+
+operation::planets-list-example[snippets='response-fields,curl-request,http-response']
+
+
+
+[[resources-planets-create]]
+=== Creating a planet
+
+A `POST` request is used to create a planet.
+
+operation::planets-create-example[snippets='request-fields,curl-request,http-response']
+
+[[resources-planet]]
+== Planet
+
+The Planet resource is used to retrieve, update, and delete individual planets
+
+
+
+[[resources-planet-links]]
+=== Links
+
+include::{snippets}/planet-get-example/links.adoc[]
+
+
+
+[[resources-planet-retrieve]]
+=== Retrieve a planet
+
+A `GET` request will retrieve the details of a planet
+
+operation::planet-get-example[snippets='response-fields,curl-request,http-response']
+
+
+
+[[resources-planet-update]]
+=== Update a planet
+
+A `PATCH` request is used to update a planet
+
+==== Request structure
+
+include::{snippets}/planet-update-example/request-fields.adoc[]
+
+To leave an attribute of a planet unchanged, any of the above may be omitted from the request.
+
+operation::planet-update-example[snippets='curl-request,http-response']
+
+
+//
+
+[[resources-people]]
+== People
+
+The People resources is used to create and list people
+
+
+
+[[resources-people-list]]
+=== Listing people
+
+A `GET` request will list all of the service's people.
+
+operation::people-list-example[snippets='response-fields,curl-request,http-response']
+
+
+
+[[resources-people-create]]
+=== Creating a person
+
+A `POST` request is used to create a person.
+
+operation::people-create-example[snippets='request-fields,curl-request,http-response']
+
+[[resources-person]]
+== People
+
+The People resource is used to retrieve, update, and delete individual people
+
+
+
+[[resources-people-links]]
+=== Links
+
+include::{snippets}/people-get-example/links.adoc[]
+
+
+
+[[resources-people-retrieve]]
+=== Retrieve a person
+
+A `GET` request will retrieve the details of a person
+
+operation::people-get-example[snippets='response-fields,curl-request,http-response']
+
+
+
+[[resources-people-update]]
+=== Update a person
+
+A `PATCH` request is used to update a person
+
+==== Request structure
+
+include::{snippets}/people-update-example/request-fields.adoc[]
+
+To leave an attribute of a person unchanged, any of the above may be omitted from the request.
+
+operation::people-update-example[snippets='curl-request,http-response']

@@ -9,11 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +42,7 @@ public class PlanetRestController {
     }
 
     @PostMapping(value = "/planets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE})
-    public ResponseEntity<PlanetResource> addPlanet(@RequestBody Planet planet) {
+    public ResponseEntity<PlanetResource> addPlanet(@Valid @RequestBody Planet planet) {
         Planet savedPlanet = planetRepository.save(planet);
         PlanetResource planetResource = planetResourceAssembler.toResource(savedPlanet);
         return ResponseEntity.created(URI.create(planetResource.getLink(Link.REL_SELF).getHref())).build();
@@ -52,6 +56,19 @@ public class PlanetRestController {
             return new ResponseEntity<>(planetResource, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping(value = "/planets/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateNote(@PathVariable("id") long id, @RequestBody PlanetPatchInput planetPatchInput) {
+        Optional<Planet> byId = planetRepository.findById(id);
+        if(byId.isPresent()){
+            Planet planet = byId.get();
+            if (planetPatchInput.getName() != null) {
+                planet.setName(planetPatchInput.getName());
+            }
+            this.planetRepository.save(planet);
         }
     }
 

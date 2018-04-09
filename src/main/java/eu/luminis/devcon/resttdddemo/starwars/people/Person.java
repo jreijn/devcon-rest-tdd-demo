@@ -1,4 +1,4 @@
-package eu.luminis.devcon.resttdddemo.starwars.planets;
+package eu.luminis.devcon.resttdddemo.starwars.people;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-public class Planet {
+public class Person {
 
     @Id
     @GeneratedValue
@@ -17,18 +17,11 @@ public class Planet {
     @Size(min = 1)
     private String name;
 
-    private Long population = 0L;
-
-    public Planet() {
+    public Person() {
     }
 
-    public Planet(String name) {
+    public Person(String name) {
         this.name = name;
-    }
-
-    public Planet(String name, Long population) {
-        this.name = name;
-        this.population = population;
     }
 
     public Long getId() {
@@ -47,11 +40,4 @@ public class Planet {
         this.name = name;
     }
 
-    public Long getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(Long population) {
-        this.population = population;
-    }
 }

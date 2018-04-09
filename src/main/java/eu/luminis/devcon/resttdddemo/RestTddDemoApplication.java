@@ -1,5 +1,7 @@
 package eu.luminis.devcon.resttdddemo;
 
+import eu.luminis.devcon.resttdddemo.starwars.people.Person;
+import eu.luminis.devcon.resttdddemo.starwars.people.PersonRepository;
 import eu.luminis.devcon.resttdddemo.starwars.planets.Planet;
 import eu.luminis.devcon.resttdddemo.starwars.planets.PlanetRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -21,11 +23,20 @@ public class RestTddDemoApplication {
     }
 
     @Bean
-    CommandLineRunner init(PlanetRepository planetRepository) {
+    CommandLineRunner initPlanets(PlanetRepository planetRepository) {
         return (args) ->
                 Arrays.asList("Alderaan,Bespin,Naboo,Coruscant,Kamino,Geonosis".split(","))
                         .forEach(planetName -> {
                             planetRepository.save(new Planet(planetName));
+                        });
+    }
+
+    @Bean
+    CommandLineRunner initPeople(PersonRepository personRepository) {
+        return (args) ->
+                Arrays.asList("Luke Skywalker,C-3PO,R2-D2,Darth Vader,Leia Organa,Obi-Wan Kenobi".split(","))
+                        .forEach(name -> {
+                            personRepository.save(new Person(name));
                         });
     }
 
