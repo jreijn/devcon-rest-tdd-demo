@@ -61,7 +61,7 @@ public class PlanetRestController {
 
     @PatchMapping(value = "/planets/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateNote(@PathVariable("id") long id, @RequestBody PlanetPatchInput planetPatchInput) {
+    public void updatePlanet(@PathVariable("id") long id, @RequestBody PlanetPatchInput planetPatchInput) {
         Optional<Planet> byId = planetRepository.findById(id);
         if(byId.isPresent()){
             Planet planet = byId.get();
