@@ -1,6 +1,5 @@
 package eu.luminis.devcon.resttdddemo.starwars.people;
 
-import eu.luminis.devcon.resttdddemo.starwars.planets.PlanetResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
