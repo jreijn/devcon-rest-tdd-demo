@@ -60,7 +60,7 @@ public class PeopleRestController {
 
     @PatchMapping(value = "/people/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateNote(@PathVariable("id") long id, @RequestBody PersonPatchInput personPatchInput) {
+    public void updatePerson(@PathVariable("id") long id, @RequestBody PersonPatchInput personPatchInput) {
         Optional<Person> byId = personRepository.findById(id);
         if (byId.isPresent()) {
             Person person = byId.get();
