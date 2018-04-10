@@ -72,7 +72,7 @@ use of HTTP status codes.
 
 Every response has the following header(s):
 
-include::{snippets}/headers-example/response-headers.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/headers-example/response-headers.adoc[]
 
 [[overview-errors]]
 == Errors
@@ -80,12 +80,12 @@ include::{snippets}/headers-example/response-headers.adoc[]
 Whenever an error response (status code >= 400) is returned, the body will contain a JSON object
 that describes the problem. The error object has the following structure:
 
-include::{snippets}/error-example/response-fields.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/error-example/auto-response-fields.adoc[]
 
 For example, a request to create a planet with incorrect information results in a
 `400 Bad Request` response:
 
-include::{snippets}/error-example/http-response.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/error-example/http-response.adoc[]
 
 [[overview-hypermedia]]
 == Hypermedia
@@ -113,7 +113,7 @@ The index provides the entry point into the service.
 
 A `GET` request is used to access the index
 
-operation::index-example[snippets='response-fields,http-response,links']
+operation::star-wars-rest-docs-tests/index-example[snippets='auto-response-fields,http-response,links']
 
 
 
@@ -129,7 +129,7 @@ The Planets resources is used to create and list planets
 
 A `GET` request will list all of the service's planets.
 
-operation::planets-list-example[snippets='response-fields,curl-request,http-response']
+operation::star-wars-rest-docs-tests/test-get-all-planets[snippets='auto-response-fields,curl-request,http-response']
 
 
 
@@ -138,7 +138,7 @@ operation::planets-list-example[snippets='response-fields,curl-request,http-resp
 
 A `POST` request is used to create a planet.
 
-operation::planets-create-example[snippets='request-fields,curl-request,http-response']
+operation::star-wars-rest-docs-tests/test-add-planet[snippets='auto-request-fields,curl-request,http-response']
 
 [[resources-planet]]
 == Planet
@@ -150,7 +150,7 @@ The Planet resource is used to retrieve, update, and delete individual planets
 [[resources-planet-links]]
 === Links
 
-include::{snippets}/planet-get-example/links.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/test-get-planet/links.adoc[]
 
 
 
@@ -159,7 +159,7 @@ include::{snippets}/planet-get-example/links.adoc[]
 
 A `GET` request will retrieve the details of a planet
 
-operation::planet-get-example[snippets='response-fields,curl-request,http-response']
+operation::star-wars-rest-docs-tests/test-get-planet[snippets='auto-response-fields,curl-request,http-response']
 
 
 
@@ -170,11 +170,11 @@ A `PATCH` request is used to update a planet
 
 ==== Request structure
 
-include::{snippets}/planet-update-example/request-fields.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/test-update-planet/auto-request-fields.adoc[]
 
 To leave an attribute of a planet unchanged, any of the above may be omitted from the request.
 
-operation::planet-update-example[snippets='curl-request,http-response']
+operation::star-wars-rest-docs-tests/test-update-planet[snippets='curl-request,http-response']
 
 
 //
@@ -184,56 +184,11 @@ operation::planet-update-example[snippets='curl-request,http-response']
 
 The People resources is used to create and list people
 
+include::{snippets}/star-wars-rest-docs-tests/test-get-all-people/auto-section.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/test-add-people/auto-section.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/test-get-person/auto-section.adoc[]
+include::{snippets}/star-wars-rest-docs-tests/test-update-people/auto-section.adoc[]
 
-
-[[resources-people-list]]
-=== Listing people
-
-A `GET` request will list all of the service's people.
-
-operation::people-list-example[snippets='response-fields,curl-request,http-response']
-
-
-
-[[resources-people-create]]
-=== Creating a person
-
-A `POST` request is used to create a person.
-
-operation::people-create-example[snippets='request-fields,curl-request,http-response']
-
-[[resources-person]]
-== People
-
-The People resource is used to retrieve, update, and delete individual people
-
-
-
-[[resources-people-links]]
-=== Links
-
-include::{snippets}/people-get-example/links.adoc[]
-
-
-
-[[resources-people-retrieve]]
-=== Retrieve a person
-
-A `GET` request will retrieve the details of a person
-
-operation::people-get-example[snippets='response-fields,curl-request,http-response']
-
-
-
-[[resources-people-update]]
-=== Update a person
-
-A `PATCH` request is used to update a person
-
-==== Request structure
-
-include::{snippets}/people-update-example/request-fields.adoc[]
-
-To leave an attribute of a person unchanged, any of the above may be omitted from the request.
-
-operation::people-update-example[snippets='curl-request,http-response']
+//To leave an attribute of a person unchanged, any of the above may be omitted from the request.
+//
+//operation::star-wars-rest-docs-tests/test-update-people[snippets='curl-request,http-response']

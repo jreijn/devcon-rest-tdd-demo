@@ -9,10 +9,16 @@ import javax.validation.constraints.Size;
 @Entity
 public class Planet {
 
+    /**
+     * Unique ID for this planet.
+     */
     @Id
     @GeneratedValue
     private Long id;
 
+    /**
+     * Name of this planet.
+     */
     @NotNull
     @Size(min = 1)
     private String name;

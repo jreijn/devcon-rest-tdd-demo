@@ -1,6 +1,5 @@
 package eu.luminis.devcon.resttdddemo.starwars.people;
 
-import eu.luminis.devcon.resttdddemo.starwars.planets.PlanetResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Link;
@@ -33,6 +32,11 @@ public class PeopleRestController {
         this.personRepository = personRepository;
     }
 
+    /**
+     * Lists all people.
+     *
+     * @return list of all people
+     */
     @GetMapping(value = "/people", produces = {MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE})
     public ResponseEntity<Resources<PersonResource>> getAllPeople() {
         List<Person> all = personRepository.findAll();
@@ -40,6 +44,12 @@ public class PeopleRestController {
         return new ResponseEntity<>(personResources, HttpStatus.OK);
     }
 
+    /**
+     * Adds a new person.
+     *
+     * @param person Person information
+     * @return response
+     */
     @PostMapping(value = "/people", produces = {MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE})
     public ResponseEntity<PersonResource> addPerson(@RequestBody Person person) {
         Person savedPerson = personRepository.save(person);
@@ -47,6 +57,12 @@ public class PeopleRestController {
         return ResponseEntity.created(URI.create(personResource.getLink(Link.REL_SELF).getHref())).build();
     }
 
+    /**
+     * Returns a person by ID.
+     *
+     * @param id ID of the person.
+     * @return response
+     */
     @GetMapping(value = "/people/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaTypes.HAL_JSON_VALUE})
     public ResponseEntity<PersonResource> getPersonById(@PathVariable Long id) {
         Optional<Person> person = personRepository.findById(id);
@@ -58,6 +74,12 @@ public class PeopleRestController {
         }
     }
 
+    /**
+     * Updates existing people.
+     *
+     * @param id         Person ID.
+     * @param personPatchInput Person information.
+     */
     @PatchMapping(value = "/people/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePeople(@PathVariable("id") long id, @RequestBody PersonPatchInput personPatchInput) {

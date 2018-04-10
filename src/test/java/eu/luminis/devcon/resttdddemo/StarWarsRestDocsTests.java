@@ -1,5 +1,7 @@
 package eu.luminis.devcon.resttdddemo;
 
+import capital.scalable.restdocs.AutoDocumentation;
+import capital.scalable.restdocs.jackson.JacksonResultHandlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.luminis.devcon.resttdddemo.starwars.people.Person;
 import eu.luminis.devcon.resttdddemo.starwars.people.PersonRepository;
@@ -14,6 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.cli.CliDocumentation;
+import org.springframework.restdocs.http.HttpDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static capital.scalable.restdocs.response.ResponseModifyingPreprocessors.limitJsonArrayLength;
+import static capital.scalable.restdocs.response.ResponseModifyingPreprocessors.replaceBinaryContent;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.halLinks;
@@ -36,6 +44,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -73,9 +83,24 @@ public class StarWarsRestDocsTests {
     @Before
     public void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+                .alwaysDo(JacksonResultHandlers.prepareJackson(objectMapper))
+                .alwaysDo(commonDocumentation())
                 .apply(documentationConfiguration(this.restDocumentation)
-                        .operationPreprocessors()
-                        .withResponseDefaults(prettyPrint()))
+                        .uris()
+                        .withScheme("http")
+                        .withHost("localhost")
+                        .withPort(8080)
+                        .and().snippets()
+                        .withDefaults(CliDocumentation.curlRequest(),
+                                HttpDocumentation.httpRequest(),
+                                HttpDocumentation.httpResponse(),
+                                AutoDocumentation.requestFields(),
+                                AutoDocumentation.responseFields(),
+                                AutoDocumentation.pathParameters(),
+                                AutoDocumentation.requestParameters(),
+                                AutoDocumentation.description(),
+                                AutoDocumentation.methodAndPath(),
+                                AutoDocumentation.section()))
                 .build();
         planetRepository.deleteAll();
         planetRepository.saveAll(createPlanets());
@@ -90,16 +115,22 @@ public class StarWarsRestDocsTests {
 
     }
 
+    protected RestDocumentationResultHandler commonDocumentation() {
+        return document("{class-name}/{method-name}",
+                preprocessRequest(), commonResponsePreprocessor());
+    }
+
+    protected OperationResponsePreprocessor commonResponsePreprocessor() {
+        return preprocessResponse(replaceBinaryContent(), limitJsonArrayLength(objectMapper),
+                prettyPrint());
+    }
+
     @Test
     public void headersExample() throws Exception {
         this.mockMvc
                 .perform(get("/"))
                 .andExpect(status().isOk())
-                .andDo(document("headers-example",
-                        responseHeaders(
-                                headerWithName("Content-Type")
-                                        .description("The Content-Type of the payload, e.g. `application/hal+json`")
-                        )));
+                ;
     }
 
     @Test
@@ -110,28 +141,14 @@ public class StarWarsRestDocsTests {
                         .requestAttr(RequestDispatcher.ERROR_REQUEST_URI, "/planets")
                         .requestAttr(RequestDispatcher.ERROR_MESSAGE, "Validation failed. Field 'name' must not be null."))
                 .andExpect(status().isBadRequest())
-                .andDo(document("error-example",
-                        responseFields(
-                                fieldWithPath("error").description("The HTTP error that occurred, e.g. `Not Found`"),
-                                fieldWithPath("message").description("A description of the cause of the error"),
-                                fieldWithPath("path").description("The path to which the request was made"),
-                                fieldWithPath("status").description("The HTTP status code, e.g. `400`"),
-                                fieldWithPath("timestamp").description("The time, in milliseconds, at which the error occurred"))));
+                ;
     }
 
     @Test
     public void indexExample() throws Exception {
         this.mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andDo(document("index-example",
-                        links(
-                                linkWithRel("self").description("The resource itself"),
-                                linkWithRel("planets").description("The <<resources-planets,Planets resource>>"),
-                                linkWithRel("people").description("The <<resources-people,People resource>>")
-                        ),
-
-                        responseFields(
-                                subsectionWithPath("_links").description("<<resources-index-links,Links>> to other resources"))));
+                ;
     }
 
     @Test
@@ -139,16 +156,7 @@ public class StarWarsRestDocsTests {
         mockMvc.perform(get("/planets")
                 .accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(document("planets-list-example",
-                        links(halLinks(),
-                                linkWithRel("self").ignored()
-                        ),
-                        responseFields(
-                                subsectionWithPath("_embedded.planets").description("A list of <<planets, Planet resources>>"),
-                                subsectionWithPath("_links").description("")
-                        )
-                ));
+                ;
     }
 
     @Test
@@ -156,20 +164,7 @@ public class StarWarsRestDocsTests {
         mockMvc.perform(get("/planets/{id}", planetFixture.getId())
                 .accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andDo(document("planet-get-example",
-                        pathParameters(
-                                parameterWithName("id").description("Planet's id")
-                        ),
-                        links(halLinks(),
-                                linkWithRel("self").ignored()
-                        ),
-                        responseFields(
-                                fieldWithPath("id").description("Id of the planet"),
-                                fieldWithPath("name").description("Name of the planet"),
-                                fieldWithPath("population").description("Planet's population"),
-                                subsectionWithPath("_links").ignored()
-                        )))
-                .andExpect(status().isOk());
+                ;
     }
 
     @Test
@@ -184,13 +179,7 @@ public class StarWarsRestDocsTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(p)))
                 .andExpect(status().isCreated())
-                .andDo(document("planets-create-example",
-                        requestFields(
-                                fieldWithPath("id").description("Planet's ID"),
-                                fieldWithPath("name").description("Planet's name"),
-                                fieldWithPath("population").description("Planet's population").type(JsonFieldType.NUMBER)
-                        )
-                ));
+                ;
     }
 
     @Test
@@ -204,13 +193,7 @@ public class StarWarsRestDocsTests {
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(planet)))
-                .andExpect(status().isNoContent())
-                .andDo(document("planet-update-example",
-                        requestFields(
-                                fieldWithPath("name").description("Planet's name"),
-                                fieldWithPath("population").description("Planet's population")
-                        )
-                ));
+                .andExpect(status().isNoContent());
     }
 
     private List<Planet> createPlanets() {
@@ -245,34 +228,14 @@ public class StarWarsRestDocsTests {
         mockMvc.perform(get("/people")
                 .accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andDo(document("people-list-example",
-                        links(halLinks(),
-                                linkWithRel("self").ignored()
-                        ),
-                        responseFields(
-                                subsectionWithPath("_embedded.persons").description("A list of <<people, Person resources>>"),
-                                subsectionWithPath("_links").description("")
-                        )
-                ));
+                ;
     }
 
     @Test
     public void testGetPerson() throws Exception {
         mockMvc.perform(get("/people/{id}", personFixture.getId()).accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andDo(document("people-get-example",
-                        pathParameters(
-                                parameterWithName("id").description("Person's id")
-                        ),
-                        links(halLinks(),
-                                linkWithRel("self").ignored()
-                        ),
-                        responseFields(
-                                fieldWithPath("id").description("Person's id"),
-                                fieldWithPath("name").description("Person's name"),
-                                subsectionWithPath("_links").ignored()
-                        )))
-                .andExpect(status().isOk());
+                ;
     }
 
     @Test
@@ -287,12 +250,7 @@ public class StarWarsRestDocsTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(p)))
                 .andExpect(status().isCreated())
-                .andDo(document("people-create-example",
-                        requestFields(
-                                fieldWithPath("id").description("Person's ID"),
-                                fieldWithPath("name").description("Person's name")
-                        )
-                ));
+                ;
     }
 
     @Test
@@ -306,11 +264,7 @@ public class StarWarsRestDocsTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(person)))
                 .andExpect(status().isNoContent())
-                .andDo(document("people-update-example",
-                        requestFields(
-                                fieldWithPath("name").description("Person's name")
-                        )
-                ));
+                ;
     }
 
 }
