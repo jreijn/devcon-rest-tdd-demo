@@ -20,7 +20,6 @@ import org.springframework.restdocs.cli.CliDocumentation;
 import org.springframework.restdocs.http.HttpDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -34,11 +33,6 @@ import java.util.Map;
 
 import static capital.scalable.restdocs.response.ResponseModifyingPreprocessors.limitJsonArrayLength;
 import static capital.scalable.restdocs.response.ResponseModifyingPreprocessors.replaceBinaryContent;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.halLinks;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -47,13 +41,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -130,7 +117,7 @@ public class StarWarsRestDocsTests {
         this.mockMvc
                 .perform(get("/"))
                 .andExpect(status().isOk())
-                ;
+        ;
     }
 
     @Test
@@ -141,14 +128,14 @@ public class StarWarsRestDocsTests {
                         .requestAttr(RequestDispatcher.ERROR_REQUEST_URI, "/planets")
                         .requestAttr(RequestDispatcher.ERROR_MESSAGE, "Validation failed. Field 'name' must not be null."))
                 .andExpect(status().isBadRequest())
-                ;
+        ;
     }
 
     @Test
     public void indexExample() throws Exception {
         this.mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                ;
+        ;
     }
 
     @Test
@@ -156,7 +143,7 @@ public class StarWarsRestDocsTests {
         mockMvc.perform(get("/planets")
                 .accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                ;
+        ;
     }
 
     @Test
@@ -164,7 +151,7 @@ public class StarWarsRestDocsTests {
         mockMvc.perform(get("/planets/{id}", planetFixture.getId())
                 .accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                ;
+        ;
     }
 
     @Test
@@ -179,7 +166,7 @@ public class StarWarsRestDocsTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(p)))
                 .andExpect(status().isCreated())
-                ;
+        ;
     }
 
     @Test
@@ -228,14 +215,14 @@ public class StarWarsRestDocsTests {
         mockMvc.perform(get("/people")
                 .accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                ;
+        ;
     }
 
     @Test
     public void testGetPerson() throws Exception {
         mockMvc.perform(get("/people/{id}", personFixture.getId()).accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(status().isOk())
-                ;
+        ;
     }
 
     @Test
@@ -250,7 +237,7 @@ public class StarWarsRestDocsTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(p)))
                 .andExpect(status().isCreated())
-                ;
+        ;
     }
 
     @Test
@@ -264,7 +251,7 @@ public class StarWarsRestDocsTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(person)))
                 .andExpect(status().isNoContent())
-                ;
+        ;
     }
 
 }
