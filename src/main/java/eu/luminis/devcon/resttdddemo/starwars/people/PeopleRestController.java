@@ -20,7 +20,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-@ExposesResourceFor(PersonResource.class)
 @RestController
 public class PeopleRestController {
 
