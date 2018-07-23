@@ -100,7 +100,7 @@
                             <backend>html5</backend>
                             <doctype>book</doctype>
                             <sourceHighlighter>highlightjs</sourceHighlighter>
-                            <outputDirectory>${basedir}/target/html</outputDirectory>
+                            <outputDirectory>${basedir}/docs</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
